@@ -1,3 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
 body {
     background-color: bisque;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
+
+.boardcontainer {
+    background-color:rgb(219, 147, 123);
+    width: 600px;
+    min-height: 200px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 1em 1em;
+}
+
