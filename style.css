@@ -15,6 +15,20 @@ h2 {
     padding: 2em;
 }
 
+.gamecontainer {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+}
+
+.player1container, .player2container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 1em;
+    text-align: center;
+}
+
 .boardcontainer {
     background-color:rgb(219, 147, 123);
     width: 300px;
