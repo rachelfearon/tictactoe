@@ -68,6 +68,10 @@ const gameDisplay = (function() {
                 } else if (playerTwoP == null) {
                     gameDisplay.result.textContent = `O is the winner!`;
                 }  
+        } else if (token === "It's a tie!") {
+            gameDisplay.result.textContent = "It's a tie!";
+        } else {
+            console.log("displayWinMessage error");
         }
     }
 
@@ -76,12 +80,34 @@ const gameDisplay = (function() {
     }
 
     function clearPlayerNames() {
-        playerOneSpace.removeChild(playerOneSpace.lastElementChild);
-        playerTwoSpace.removeChild(playerTwoSpace.lastElementChild);
+        let p1 = playerOneSpace.querySelector('p');
+        let p2 = playerTwoSpace.querySelector('p');
+        if (!p1) {
+            return;
+        } else {
+            playerOneSpace.removeChild(p1);
+        playerTwoSpace.removeChild(p2);
+        }
+        
     }
 
     function toggleHideForm() {
-        formContainer.classList.toggle("hidden");
+        let players = gameController.returnPlayer();
+        console.log(players[0]);
+        if (players[0] !== undefined) {
+            return;
+        } else {
+            formContainer.classList.toggle("hidden");
+        }
+        
+    }
+
+    function hideForm() {
+        formContainer.classList.add('hidden');
+    }
+
+    function showForm() {
+        formContainer.classList.remove('hidden');
     }
 
     //update box display on click (from controller module), receive token input & update textContent
@@ -101,7 +127,9 @@ const gameDisplay = (function() {
         playerOneSpace,
         clearWinMessage,
         clearPlayerNames,
-        toggleHideForm
+        toggleHideForm,
+        hideForm,
+        showForm
     }
 })();
     
@@ -188,7 +216,7 @@ const gameController = (function() {
     //On player info submit, pass input value & token to Player FF - receive and store player objs
     const submitButton = document.getElementById("playerSubmit");
     submitButton.addEventListener('click', event => {
-        gameDisplay.toggleHideForm();
+        gameDisplay.hideForm();
         const name1 = document.getElementById("player1").value;
         const name2 = document.getElementById("player2").value;
         playerOne = Player(`${name1}`, `player1`);
@@ -209,7 +237,7 @@ const gameController = (function() {
     //on reset game btn, reset board array, player info, clear display
     resetButton.addEventListener('click', event => {
         resetButton.textContent = "Reset Game";
-        gameDisplay.toggleHideForm();
+        gameDisplay.showForm();
         gameLogic.resetBoard();
         gameDisplay.renderBoard();
         gameDisplay.clearWinMessage();
@@ -235,7 +263,10 @@ const gameController = (function() {
                 //fill square with appropriate player token
                 gameLogic.updateBoard(e.target.id, turn);
                 gameDisplay.renderBoard();
+
+
                 let playerWins = gameLogic.findWinPattern(`${gameLogic.returnWhoseTurn()}`);
+                console.log(playerWins);
                 if (playerWins === true) {
                     gameDisplay.boardContainer.style["pointer-events"] = "none";
                     if (gameLogic.returnWhoseTurn() === "X") {
@@ -248,8 +279,15 @@ const gameController = (function() {
                     //append win message div with win message
                     //change Reset Button text to read "Play Again"
                     resetButton.textContent = "Play Again";
-                } else { //insert logic here to check if all board indexes have values, if they do, declare a tie, else keep going
-                    gameLogic.updateWhoseTurn(turn);
+                } else { 
+                    //insert logic here to check if all board indexes have values, if they do, declare a tie, else keep going
+                    let board = gameLogic.returnBoard();
+                    let result = board.every(val => val != "");
+                    if (result === true) {
+                        gameDisplay.displayWinMessage("It's a tie!");
+                    } else {
+                        gameLogic.updateWhoseTurn(turn);
+                    }
                 }
             }
         }
