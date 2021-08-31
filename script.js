@@ -1,7 +1,3 @@
-//player factory function
-    //take in name & token input
-    //return player objs w/ name, token props
-
 const Player = (playerName, inputId) => {
     let token;
     let name = playerName;
@@ -13,8 +9,6 @@ const Player = (playerName, inputId) => {
     return {name, token};
 }
 
-
-//board display module
 const gameDisplay = (function() {
     const boardContainer = document.querySelector('.boardcontainer');
     const squareList = boardContainer.querySelectorAll('p');
@@ -23,11 +17,9 @@ const gameDisplay = (function() {
     const playerOneSpace = document.querySelector(".player1container");
     const playerTwoSpace = document.querySelector(".player2container");
     const formContainer = document.querySelector('.formcontainer');
+    boardContainer.style["pointer-events"] = "none";
     
-
-    //update DOM with player name info upon receiving call from event listener
     function displayPlayers(playerObj) {
-        console.log("displaying players", playerObj);
         if (playerObj.token === "X") {
             const playerOneSpace = document.querySelector(".player1container");
             let p = document.createElement("p");
@@ -41,10 +33,8 @@ const gameDisplay = (function() {
         } else {
             console.log("displayPlayers error");
         }
-        
     };
 
-    //populate grid based on board array contents
     const renderBoard = function() {
         const square = squareList;
         const boardMoves = gameLogic.returnBoard();
@@ -88,18 +78,6 @@ const gameDisplay = (function() {
             playerOneSpace.removeChild(p1);
         playerTwoSpace.removeChild(p2);
         }
-        
-    }
-
-    function toggleHideForm() {
-        let players = gameController.returnPlayer();
-        console.log(players[0]);
-        if (players[0] !== undefined) {
-            return;
-        } else {
-            formContainer.classList.toggle("hidden");
-        }
-        
     }
 
     function hideForm() {
@@ -116,13 +94,6 @@ const gameDisplay = (function() {
         inputs[1].value = "O";
     }
 
-    //update box display on click (from controller module), receive token input & update textContent
-    //display player names/tokens from inputs (from controller on btn submit)
-    //display win or tie msg at game end
-    //hide/reveal player input/btn
-    //display button for reset game
-
-
     return {
         displayPlayers,
         renderBoard,
@@ -133,20 +104,18 @@ const gameDisplay = (function() {
         playerOneSpace,
         clearWinMessage,
         clearPlayerNames,
-        toggleHideForm,
         hideForm,
         showForm,
         resetFormInputs
     }
 })();
     
-
-
-//game logic
 const gameLogic = (function() {
     const winPatterns = [[0, 1, 2], [0, 4, 8], [0, 3, 6], [1, 4, 7], 
                         [2, 5, 8], [2, 4, 6], [3, 4, 5], [6, 7, 8]];
-    
+
+    let board = [``, ``, ``, ``, ``, ``, ``, ``, ``];
+
     let whoseTurn = "X";
 
     function returnWhoseTurn() {
@@ -162,8 +131,6 @@ const gameLogic = (function() {
             whoseTurn = "X"
         }
     }
-
-    let board = [``, ``, ``, ``, ``, ``, ``, ``, ``];
 
     function returnBoard() {
         return board;
@@ -208,41 +175,24 @@ const gameLogic = (function() {
         findWinPattern,
     }
 })();
-    //decide what happens if filled square is clicked
-    //decide what happens if empty square is clicked - update whose turn it is after move is made
-    //check whose turn it is - or rather, say what happens depending on the turn
-    //check for winning array pattern (store winning pattern in local variable)
 
-
-//game controller
 const gameController = (function() {
-    let playerOne, playerTwo;
-    
     const resetButton = document.querySelector("#resetbutton");
-    //const board = gameBoard.boardContainer;
-    //On player info submit, pass input value & token to Player FF - receive and store player objs
     const submitButton = document.getElementById("playerSubmit");
+    
     submitButton.addEventListener('click', event => {
-        
+        gameDisplay.boardContainer.style.removeProperty('pointer-events');
         gameDisplay.hideForm();
         const name1 = document.getElementById("player1").value;
         const name2 = document.getElementById("player2").value;
         playerOne = Player(`${name1}`, `player1`);
         playerTwo = Player(`${name2}`, `player2`);
-        console.log(playerOne);
-        console.log(playerTwo);
-        // send it to display function to update DOM
         gameDisplay.displayPlayers(playerOne);
         gameDisplay.displayPlayers(playerTwo);
         gameDisplay.resetFormInputs();
+        
     })
 
-    function logPlayer () {
-        return {playerOne, playerTwo};
-    }
-
-    //set whose turn it is now, update on successful move (if square is not empty)
-    //on reset game btn, reset board array, player info, clear display
     resetButton.addEventListener('click', event => {
         resetButton.textContent = "Reset Game";
         gameDisplay.showForm();
@@ -250,31 +200,22 @@ const gameController = (function() {
         gameDisplay.renderBoard();
         gameDisplay.clearWinMessage();
         gameDisplay.clearPlayerNames();
-        gameDisplay.boardContainer.style.removeProperty('pointer-events');
+        gameDisplay.boardContainer.style["pointer-events"] = "none";
         gameLogic.updateWhoseTurn(true);
     })
     
-
-    
     gameDisplay.boardContainer.addEventListener('click', function(e) {
-        let playerOne;
-        let playerTwo;
         if (!e.target.id) {
             return;
         } else {
-            //on grid click, check for empty square
             if (e.target.textContent !== "") {
                 return;
             } else {
-                //check whose turn it is
                 let turn = gameLogic.returnWhoseTurn();
-                //fill square with appropriate player token
                 gameLogic.updateBoard(e.target.id, turn);
                 gameDisplay.renderBoard();
 
-
                 let playerWins = gameLogic.findWinPattern(`${gameLogic.returnWhoseTurn()}`);
-                console.log(playerWins);
                 if (playerWins === true) {
                     gameDisplay.boardContainer.style["pointer-events"] = "none";
                     if (gameLogic.returnWhoseTurn() === "X") {
@@ -282,13 +223,9 @@ const gameController = (function() {
                     } else if (gameLogic.returnWhoseTurn() === "O") {
                         gameDisplay.displayWinMessage("O");
                     }
-                    console.log("winner");
-                    //reveal win message div
-                    //append win message div with win message
-                    //change Reset Button text to read "Play Again"
+
                     resetButton.textContent = "Play Again";
                 } else { 
-                    //insert logic here to check if all board indexes have values, if they do, declare a tie, else keep going
                     let board = gameLogic.returnBoard();
                     let result = board.every(val => val != "");
                     if (result === true) {
@@ -300,40 +237,4 @@ const gameController = (function() {
             }
         }
     })
-    //update board array with new player token spot
-    //check for winning pattern
-    
-    //declare winner, reset
-
-    return {
-        logPlayer, 
-        returnPlayer: function() {return {playerOne, playerTwo}}
-
-    }
-    
 })();
-
-
-
-
-
-
-// const gameBoard = (function() {
-    
-
-//     const renderBoard = (function() {
-//         const square = gameDisplay.squareList;
-//         const boardMoves = gameLogic.returnBoard();
-//         for (let i = 0; i < boardMoves.length; i++) {
-//             square[i].textContent = boardMoves[i];
-//             }
-//     })();
-
-
-//     return {
-//         renderBoard,
-//         boardContainer
-//     }
-// })(); 
-
-

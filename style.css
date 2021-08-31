@@ -54,12 +54,10 @@ h2 {
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 1fr 1fr 1fr;
     gap: 8px;
-    /* border: 1px solid black; */
     text-align: center;
     text-justify: center;
     align-items: center;
     align-self: center;
-
 }
 
 .boardcontainer > p {
@@ -73,6 +71,7 @@ h2 {
     font-size: 50px;
     font-family:sans-serif;
     font-weight: 900;
+    
 }
 
 button {
@@ -96,7 +95,7 @@ button {
 }
 
 input {
-    border: 1px solid rgba(173, 132, 132, 0.473);
+    border: 1px solid rgba(173, 132, 132, 0.363);
     background-color: floralwhite;
     border-radius: 3px;
     padding: 10px;
