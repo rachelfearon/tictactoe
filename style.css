@@ -4,7 +4,7 @@
 }
 
 body {
-    background-color: bisque;
+    background-color: rgb(253, 236, 214);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -46,7 +46,7 @@ h2 {
 }
 
 .boardcontainer {
-    background-color:rgb(212, 182, 162);
+    background-color:rgb(219, 147, 123);
     width: 300px;
     min-height: 0px;
     height: 200px;
