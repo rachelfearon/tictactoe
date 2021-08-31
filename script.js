@@ -110,6 +110,12 @@ const gameDisplay = (function() {
         formContainer.classList.remove('hidden');
     }
 
+    function resetFormInputs() {
+        let inputs = document.querySelectorAll('input');
+        inputs[0].value = "X";
+        inputs[1].value = "O";
+    }
+
     //update box display on click (from controller module), receive token input & update textContent
     //display player names/tokens from inputs (from controller on btn submit)
     //display win or tie msg at game end
@@ -129,7 +135,8 @@ const gameDisplay = (function() {
         clearPlayerNames,
         toggleHideForm,
         hideForm,
-        showForm
+        showForm,
+        resetFormInputs
     }
 })();
     
@@ -216,6 +223,7 @@ const gameController = (function() {
     //On player info submit, pass input value & token to Player FF - receive and store player objs
     const submitButton = document.getElementById("playerSubmit");
     submitButton.addEventListener('click', event => {
+        
         gameDisplay.hideForm();
         const name1 = document.getElementById("player1").value;
         const name2 = document.getElementById("player2").value;
@@ -226,7 +234,7 @@ const gameController = (function() {
         // send it to display function to update DOM
         gameDisplay.displayPlayers(playerOne);
         gameDisplay.displayPlayers(playerTwo);
-
+        gameDisplay.resetFormInputs();
     })
 
     function logPlayer () {
